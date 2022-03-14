@@ -1,6 +1,7 @@
 import VideoContainer from "../components/VideoContainer";
 import { useState, useEffect } from "react";
-import { mostPopular, regionRequest } from "../api/Youtube";
+
+import axios from "axios";
 
 const listStyle = {
   paddingTop: "1rem",
@@ -30,9 +31,10 @@ const List = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await mostPopular(selectedRegion);
-      console.log(response);
-      const { data } = response;
+      const { data } = await axios.get("/.netlify/functions/youtubeVid-api", {
+        params: { region: selectedRegion },
+      });
+
       setItems(data.items);
     }
     fetchData();
@@ -40,7 +42,7 @@ const List = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const { data } = await regionRequest();
+      const { data } = await axios.get("/.netlify/functions/youtubeRegion-api");
       setRegions(data.items);
     }
     fetchData();
