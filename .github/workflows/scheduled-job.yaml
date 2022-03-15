@@ -10,6 +10,12 @@ on:
 jobs:
   scheduled-job:
     runs-on: ubuntu-latest
+    env:
+      PSQL_USER: ${{ secrets.APISecret }}
+      PSQL_HOST: ${{ secrets.PSQL_HOST }}
+      PSQL_DATABASE: ${{ secrets.PSQL_DATABASE }}
+      PSQL_PASSWORD: ${{ secrets.PSQL_PASSWORD }}
+      PSQL_PORT: ${{ secrets.PSQL_PORT }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
