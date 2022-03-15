@@ -10,6 +10,9 @@ on:
 jobs:
   scheduled-job:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
     env:
       PSQL_USER: postgres
       PSQL_HOST: 34.92.22.202
