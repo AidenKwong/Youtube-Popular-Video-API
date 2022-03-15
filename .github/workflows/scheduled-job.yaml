@@ -1,8 +1,11 @@
 name: Scheduled Job
 
 on:
+  push:
+  branches:
+    - master
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/1 * * * *"
 
 jobs:
   scheduled-job:
@@ -12,5 +15,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
+      - run: echo "running"
       - run: npm install
       - run: node db/test
