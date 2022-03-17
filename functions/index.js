@@ -1,46 +1,95 @@
-// The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
 const functions = require("firebase-functions");
-
-// The Firebase Admin SDK to access Firestore.
+const axios = require("axios");
 const admin = require("firebase-admin");
+
 admin.initializeApp();
 
-// Take the text parameter passed to this HTTP endpoint and insert it into
-// Firestore under the path /messages/:documentId/original
-exports.addMessage = functions.https.onRequest(async (req, res) => {
-  // Grab the text parameter.
-  const original = req.query.text;
-  // Push the new message into Firestore using the Firebase Admin SDK.
-  const writeResult = await admin
-    .firestore()
-    .collection("messages")
-    .add({ original: original });
-  // Send back a message that we've successfully written the message
-  res.json({ result: `Message with ID: ${writeResult.id} added.` });
-});
+exports.addRegions = functions.pubsub
+  .schedule("0 0 1 */1 *")
+  .onRun(async (context) => {
+    const regions = await axios
+      .get(
+        `https://youtube.googleapis.com/youtube/v3/i18nRegions?part=snippet&key=${process.env.BACKUP_YOUTUBE_API_KEY}`
+      )
+      .catch((err) => console.log(err));
 
-// Listens for new messages added to /messages/:documentId/original and creates an
-// uppercase version of the message to /messages/:documentId/uppercase
-exports.makeUppercase = functions.firestore
-  .document("/messages/{documentId}")
-  .onCreate((snap, context) => {
-    // Grab the current value of what was written to Firestore.
-    const original = snap.data().original;
-
-    // Access the parameter `{documentId}` with `context.params`
-    functions.logger.log("Uppercasing", context.params.documentId, original);
-
-    const uppercase = original.toUpperCase();
-
-    // You must return a Promise when performing asynchronous tasks inside a Functions such as
-    // writing to Firestore.
-    // Setting an 'uppercase' field in Firestore document returns a Promise.
-    return snap.ref.set({ uppercase }, { merge: true });
+    regions.data.items.map(async (region) => {
+      await admin
+        .firestore()
+        .collection("regions")
+        .doc(region.snippet.name)
+        .set(region);
+    });
   });
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
+
+exports.addVideos = functions.pubsub
+  .schedule("0 */3 * * *")
+  .onRun((context) => {
+    const date = new Date();
+    const hour = date.getHours();
+
+    return admin
+      .firestore()
+      .collection("regions")
+      .get()
+      .then((regions) => {
+        regions.forEach((region) => {
+          const regionName = region.data().snippet.name;
+          const regionId = region.data().id;
+          axios
+            .get(
+              `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=statistics&chart=mostPopular&maxResults=10&key=${process.env.BACKUP_YOUTUBE_API_KEY}&regionCode=${regionId}`
+            )
+            .then((response) => {
+              admin
+                .firestore()
+                .collection("dates")
+                .doc(date.toDateString())
+                .collection(regionName)
+                .doc("hour: " + hour + "(en-US)")
+                .set({ content: response.data.items });
+            });
+        });
+      });
+  });
+// exports.getRegions = functions.https.onCall(async (data, context) => {
+//   const regions = await axios
+//     .get(
+//       `https://youtube.googleapis.com/youtube/v3/i18nRegions?part=snippet&key=${process.env.BACKUP_YOUTUBE_API_KEY}`
+//     )
+//     .catch((err) => console.log(err));
+
+//   regions.data.items.map(async (region) => {
+//     await admin
+//       .firestore()
+//       .collection("regions")
+//       .doc(region.snippet.name)
+//       .set(region);
+//   });
+//   return { regions: regions.data.items };
+// });
+
+// exports.getVideos = functions.https.onCall(async (data, context) => {
+//   const date = new Date();
+//   const hour = date.getHours();
+
+//   const regions = await admin.firestore().collection("regions").get();
+
+//   const fetchVideos = async (regionId) => {
+//     const { data } = await axios.get(
+//       `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=statistics&chart=mostPopular&maxResults=10&key=${process.env.BACKUP_YOUTUBE_API_KEY}&regionCode=${regionId}`
+//     );
+//     return data.items;
+//   };
+//   regions.forEach(async (region) => {
+//     const regionName = region.data().snippet.name || "";
+//     const list = await fetchVideos(region.data().id);
+//     await admin
+//       .firestore()
+//       .collection("dates")
+//       .doc(date.toDateString())
+//       .collection(regionName)
+//       .doc("hour: " + hour + "(en-US)")
+//       .set({ content: list });
+//   });
 // });
