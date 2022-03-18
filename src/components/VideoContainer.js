@@ -1,11 +1,10 @@
 import { useRef } from "react";
-import theme from "../theme";
 
 const containerStyle = {
   margin: "1rem 0",
-  border: `1px solid ${theme.grayScale[1]}`,
+  border: `1px solid rgb(240, 240, 240)`,
   borderRadius: "0.5em",
-  boxShadow: `0rem 0.1rem 0.75rem ${theme.grayScale[2]}`,
+  boxShadow: `0rem 0.1rem 0.75rem rgb(230, 230, 230)`,
   backgroundColor: "#fff",
 };
 

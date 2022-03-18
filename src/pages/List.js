@@ -1,9 +1,9 @@
 import VideoContainer from "../components/VideoContainer";
 import { useState, useEffect } from "react";
+import VideoLoadingContainer from "../components/VideoLoadingContainer";
+import { InputLabel, MenuItem, FormControl, Select, Box } from "@mui/material";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "../firebase-config";
-
-import axios from "axios";
 
 const listStyle = {
   paddingTop: "1rem",
@@ -13,7 +13,20 @@ const listStyle = {
 
 const listHeaderStyle = {
   display: "flex",
+  alignItems: "center",
   justifyContent: "space-between",
+};
+
+const loadingContainerStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "2rem",
+  borderRadius: "4px",
+  backgroundColor: "black",
+  color: "white",
+  fontSize: "14px",
+  width: "12rem",
 };
 
 const selectStyle = {
@@ -22,87 +35,82 @@ const selectStyle = {
   textAlign: "center",
   backgroundColor: "black",
   color: "white",
-  fontSize: "0.75rem",
+  fontSize: "14px",
+  width: "12rem",
 };
+
+const getRegions = httpsCallable(functions, "getRegions");
+const getVideos = httpsCallable(functions, "getVideos");
 
 const List = () => {
   const [items, setItems] = useState([]);
   const [regions, setRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("US");
-
-  const getRegions = httpsCallable(functions, "getRegions");
-  const getVideos = httpsCallable(functions, "getVideos");
-
-  useEffect(() => {
-    getRegions()
-      .then((result) => {
-        const functionData = result.data;
-        console.log(functionData);
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  }, []);
-
-  useEffect(() => {
-    // async function fetchData() {
-    //   const { data } = await axios.get("/.netlify/functions/youtubeVid-api", {
-    //     params: { region: selectedRegion },
-    //   });
-    //   setItems(data.items);
-    // }
-    // fetchData();
-  }, [selectedRegion]);
-
-  useEffect(() => {
-    // async function fetchData() {
-    //   const { data } = await axios.get("/.netlify/functions/youtubeRegion-api");
-    //   setRegions(data.items);
-    // }
-    // fetchData();
-  }, []);
+  const [selectedRegion, setSelectedRegion] = useState("United States");
+  const [loadingRegion, setLoadingRegion] = useState(true);
+  const [loadingVideos, setLoadingVideos] = useState(true);
 
   const handleOnChange = (e) => {
     setSelectedRegion(e.target.value);
   };
 
-  const handlegetVideos = () => {
-    getVideos({ region: "US" })
+  useEffect(() => {
+    getRegions().then((result) => {
+      setRegions(result.data.regions);
+      setLoadingRegion(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    getVideos({ region: selectedRegion })
       .then((result) => {
-        const functionData = result.data;
-        console.log(functionData);
+        console.log(result);
       })
-      .catch((error) => {
-        console.log(error.message);
+      .catch((err) => {
+        console.log(err);
       });
-  };
+  }, [selectedRegion]);
 
   return (
     <div style={listStyle}>
       <div style={listHeaderStyle}>
-        <h2>Top 20</h2>
-        <select style={selectStyle} onChange={handleOnChange}>
-          {regions.map((region) => (
-            <option
-              value={region.id}
-              key={region.id}
-              selected={region.id === "US" ? "selected" : null}
+        <h2>Top 10</h2>
+        <Box sx={{ minWidth: 180 }}>
+          <FormControl fullWidth>
+            <InputLabel>Region</InputLabel>
+            <Select
+              value={selectedRegion}
+              label="Region"
+              onChange={handleOnChange}
             >
-              {region.snippet.name}
-            </option>
+              {loadingRegion && (
+                <MenuItem value="United States">United States</MenuItem>
+              )}
+
+              {regions.map((region) => (
+                <MenuItem value={region.snippet.name} key={region.id}>
+                  {region.snippet.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      </div>
+
+      {loadingVideos ? (
+        <div>
+          {[...Array(3)].map((x, i) => (
+            <VideoLoadingContainer key={i} />
           ))}
-        </select>
-      </div>
-
-      <button onClick={handlegetVideos}>getVideos</button>
-
-      <div>
-        {items.map((item) => (
-          <div key={item.id}>
-            <VideoContainer items={items} item={item} />
-          </div>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div>
+          {items.map((item) => (
+            <div key={item.id}>
+              <VideoContainer items={items} item={item} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
