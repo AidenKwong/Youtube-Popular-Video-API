@@ -90,7 +90,7 @@ const List = () => {
       </div>
       {loadingVideos ? (
         <div>
-          {[...Array(3)].map((x, i) => (
+          {[...Array(4)].map((x, i) => (
             <VideoLoadingContainer key={i} />
           ))}
         </div>

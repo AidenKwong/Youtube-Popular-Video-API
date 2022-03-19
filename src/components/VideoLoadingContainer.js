@@ -6,7 +6,7 @@ const containerStyle = {
   justifyContent: "center",
   alignItems: "center",
   flex: 1,
-  height: "560px",
+  height: "356px",
   margin: "1rem 0",
   border: `1px solid rgb(240, 240, 240)`,
   borderRadius: "0.5em",
