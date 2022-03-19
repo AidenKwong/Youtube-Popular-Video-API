@@ -1,5 +1,7 @@
 import VideoContainer from "../components/VideoContainer";
 import { useState, useEffect } from "react";
+import VideoLoadingContainer from "../components/VideoLoadingContainer";
+import { InputLabel, MenuItem, FormControl, Select, Box } from "@mui/material";
 
 import axios from "axios";
 
@@ -11,71 +13,96 @@ const listStyle = {
 
 const listHeaderStyle = {
   display: "flex",
+  alignItems: "center",
   justifyContent: "space-between",
 };
 
-const selectStyle = {
-  height: "2rem",
-  borderRadius: "4px",
-  textAlign: "center",
-  backgroundColor: "black",
-  color: "white",
-  fontSize: "0.75rem",
-};
-
 const List = () => {
-  const [items, setItems] = useState([]);
   const [regions, setRegions] = useState([]);
-
-  const [selectedRegion, setSelectedRegion] = useState("US");
-
-  useEffect(() => {
-    async function fetchData() {
-      const { data } = await axios.get("/.netlify/functions/youtubeVid-api", {
-        params: { region: selectedRegion },
-      });
-
-      setItems(data.items);
-    }
-    fetchData();
-  }, [selectedRegion]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const { data } = await axios.get("/.netlify/functions/youtubeRegion-api");
-      setRegions(data.items);
-    }
-    fetchData();
-  }, []);
+  const [region, setRegion] = useState("United States");
+  const [loadingRegion, setLoadingRegion] = useState(true);
+  const [loadingVideos, setLoadingVideos] = useState(true);
+  const [videos, setVideos] = useState([]);
 
   const handleOnChange = (e) => {
-    setSelectedRegion(e.target.value);
+    setRegion(e.target.value);
   };
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        setLoadingRegion(true);
+        const { data } = await axios.get(
+          `https://youtube-most-api.herokuapp.com/regions/allRegions`
+        );
+
+        setRegions(data.result.sort((a, b) => a.name.localeCompare(b.name)));
+        if (data) setLoadingRegion(false);
+      };
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        setLoadingVideos(true);
+        const { data } = await axios.get(
+          "https://youtube-most-api.herokuapp.com/videos/top10Videos",
+          {
+            params: {
+              region: region,
+            },
+          }
+        );
+        setVideos(data.result);
+        if (data) setLoadingVideos(false);
+      };
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [region]);
 
   return (
     <div style={listStyle}>
       <div style={listHeaderStyle}>
-        <h2>Top 20</h2>
-        <select style={selectStyle} onChange={handleOnChange}>
-          {regions.map((region) => (
-            <option
-              value={region.id}
-              key={region.id}
-              selected={region.id === "US" ? "selected" : null}
-            >
-              {region.snippet.name}
-            </option>
-          ))}
-        </select>
-      </div>
+        <h2>Top 10</h2>
 
-      <div>
-        {items.map((item) => (
-          <div key={item.id}>
-            <VideoContainer items={items} item={item} />
-          </div>
-        ))}
+        <Box sx={{ minWidth: 180 }}>
+          <FormControl fullWidth>
+            <InputLabel>Region</InputLabel>
+            <Select value={region} label="Region" onChange={handleOnChange}>
+              {loadingRegion && (
+                <MenuItem value="United States">United States</MenuItem>
+              )}
+
+              {regions.map((region) => (
+                <MenuItem value={region.name} key={region.code}>
+                  {region.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </div>
+      {loadingVideos ? (
+        <div>
+          {[...Array(3)].map((x, i) => (
+            <VideoLoadingContainer key={i} />
+          ))}
+        </div>
+      ) : (
+        <div>
+          {videos.map((video, idx) => (
+            <div key={video.id}>
+              <VideoContainer idx={idx} video={video} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
