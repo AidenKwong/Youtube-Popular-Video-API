@@ -26,7 +26,7 @@ const VideoContainer = ({ idx, video }) => {
             id="player"
             width="480"
             height="290"
-            src={`http://www.youtube.com/embed/${video.id}?enablejsapi=1&origin=http://localhost:3000`}
+            src={`https://www.youtube.com/embed/${video.id}?enablejsapi=1&origin=http://localhost:3000`}
             frameBorder="0"
           />
         </div>
