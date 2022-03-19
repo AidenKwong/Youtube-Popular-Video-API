@@ -2,19 +2,23 @@ import VideoContainer from "../components/VideoContainer";
 import { useState, useEffect } from "react";
 import VideoLoadingContainer from "../components/VideoLoadingContainer";
 import { InputLabel, MenuItem, FormControl, Select, Box } from "@mui/material";
-
+import DatePicker from "../components/DatePicker";
 import axios from "axios";
 
 const listStyle = {
   paddingTop: "1rem",
   margin: "0 auto",
-  maxWidth: "1024px",
+  maxWidth: "1280px",
 };
 
 const listHeaderStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+};
+
+const datePickerStyle = {
+  width: "50%",
 };
 
 const List = () => {
@@ -69,8 +73,9 @@ const List = () => {
   return (
     <div style={listStyle}>
       <div style={listHeaderStyle}>
-        <h2>Top 10</h2>
-
+        <div style={datePickerStyle}>
+          <DatePicker />
+        </div>
         <Box sx={{ minWidth: 180 }}>
           <FormControl fullWidth>
             <InputLabel>Region</InputLabel>
@@ -88,6 +93,7 @@ const List = () => {
           </FormControl>
         </Box>
       </div>
+
       {loadingVideos ? (
         <div>
           {[...Array(4)].map((x, i) => (

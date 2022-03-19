@@ -8,7 +8,7 @@ const headerStyle = {
 
 const headerContentStyle = {
   margin: "0 auto",
-  maxWidth: "1024px",
+  maxWidth: "1280px",
 };
 
 const websiteLogoStyle = {

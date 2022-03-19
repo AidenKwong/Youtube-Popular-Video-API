@@ -23,6 +23,7 @@ const VideoContainer = ({ idx, video }) => {
         <div width="480" height="290">
           <iframe
             title={video.id}
+            allowfullscreen="allowfullscreen"
             id="player"
             width="480"
             height="290"
