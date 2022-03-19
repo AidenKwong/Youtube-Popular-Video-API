@@ -17,13 +17,17 @@ const websiteLogoStyle = {
   alignItems: "center",
 };
 
+const webSiteNameStyle = {
+  lineHeight: "40px",
+};
+
 export default function Header() {
   return (
     <div style={headerStyle}>
       <div style={headerContentStyle}>
         <div style={websiteLogoStyle}>
           <img src={youtube_icon} alt="youtube_icon" width={40}></img>
-          <h1>Youtube Popular Video</h1>
+          <h1 style={webSiteNameStyle}>Youtube Popular Video</h1>
         </div>
       </div>
     </div>
