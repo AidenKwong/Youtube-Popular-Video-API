@@ -15,5 +15,6 @@ pre {
 }
 
 .homePage {
+  min-height: 110vh;
   background-color: rgb(245, 245, 245);
 }

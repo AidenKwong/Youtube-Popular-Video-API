@@ -19,10 +19,12 @@ const VideoContainer = ({ idx, video }) => {
   return (
     <div style={containerStyle} key={video.id}>
       <h2> {idx + 1} </h2>
+
       <div style={container1stPartStyle}>
         <div width="480" height="290">
           <iframe
             title={video.id}
+            allowFullScreen="allowfullscreen"
             id="player"
             width="480"
             height="290"
