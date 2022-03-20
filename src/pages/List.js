@@ -1,9 +1,11 @@
 import VideoContainer from "../components/VideoContainer";
 import { useState, useEffect } from "react";
 import VideoLoadingContainer from "../components/VideoLoadingContainer";
-import { InputLabel, MenuItem, FormControl, Select, Box } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import DatePicker from "../components/DatePicker";
 import axios from "axios";
+import clockWithWhiteFace from "../assets/images/clock-with-white-face.png";
+import splash from "../assets/images/splash.png";
 
 const listStyle = {
   paddingTop: "1rem",
@@ -13,13 +15,16 @@ const listStyle = {
 
 const listHeaderStyle = {
   display: "flex",
-  alignItems: "center",
   justifyContent: "space-between",
 };
 
-const datePickerStyle = {
-  width: "50%",
+const optionStyle = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.5rem",
 };
+
+const datePickerStyle = {};
 
 const unavailableStyle = {
   margin: "1rem auto",
@@ -29,9 +34,10 @@ const unavailableStyle = {
 
 const API = axios.create({
   baseURL:
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:5000"
-      : "https://youtube-most-api.herokuapp.com",
+    // process.env.NODE_ENV === "development"
+    //   ? "http://localhost:5000"
+    //   :
+    "https://youtube-most-api.herokuapp.com",
 });
 
 const List = () => {
@@ -43,8 +49,8 @@ const List = () => {
   const [date, setDate] = useState(new Date());
   const [unavailable, setUnavailable] = useState(false);
 
-  const handleOnChange = (e) => {
-    setRegion(e.target.value);
+  const handleOnChange = (e, newVal) => {
+    setRegion(newVal.label);
   };
 
   useEffect(() => {
@@ -53,7 +59,11 @@ const List = () => {
         setLoadingRegion(true);
         const { data } = await API.get("/regions/allRegions");
 
-        setRegions(data.result.sort((a, b) => a.name.localeCompare(b.name)));
+        setRegions(
+          data.result
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((region) => ({ label: region.name, code: region.code }))
+        );
         if (data) setLoadingRegion(false);
       };
       fetchData();
@@ -88,25 +98,67 @@ const List = () => {
   return (
     <div style={listStyle}>
       <div style={listHeaderStyle}>
-        <div style={datePickerStyle}>
-          <DatePicker date={date} setDate={setDate} />
-        </div>
-        <Box sx={{ minWidth: 180 }}>
-          <FormControl fullWidth>
-            <InputLabel>Region</InputLabel>
-            <Select value={region} label="Region" onChange={handleOnChange}>
-              {loadingRegion && (
-                <MenuItem value="United States">United States</MenuItem>
-              )}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1em",
+            width: "50%",
+            position: "relative",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "2.5rem",
+              marginTop: "2em",
+              position: "relative",
+              color: "rgb(50, 50, 50)",
+            }}
+          >
+            <span style={{ fontSize: "4rem", color: "black" }}>Archive</span>{" "}
+            Top 10 YouTube Most Popular Videos
+            <span
+              style={{
+                height: "min-content",
+                position: "absolute",
+                marginLeft: "1rem",
+                transform: "translate(0,0.2rem)",
+              }}
+            >
+              <img src={clockWithWhiteFace} alt="clock" width="48px" />
+            </span>
+          </h1>
 
-              {regions.map((region) => (
-                <MenuItem value={region.name} key={region.code}>
-                  {region.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
+          <h2>
+            <pre>Began keep track on popular video list on</pre>
+            <pre>March 19 2022 across all 107 regions</pre>
+          </h2>
+          <img
+            src={splash}
+            alt="splash"
+            width="100%"
+            style={{
+              position: "absolute",
+              width: "800px",
+              transform: "translate(15%,-20%) rotate(-20deg)",
+              opacity: "10%",
+            }}
+          />
+        </div>
+
+        <div style={optionStyle}>
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={regions}
+            sx={{ minWidth: 300 }}
+            onChange={handleOnChange}
+            renderInput={(params) => <TextField {...params} label="Region" />}
+          />
+          <div style={datePickerStyle}>
+            <DatePicker date={date} setDate={setDate} />
+          </div>
+        </div>
       </div>
 
       {unavailable ? (
