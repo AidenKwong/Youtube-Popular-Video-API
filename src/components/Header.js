@@ -19,6 +19,7 @@ const websiteLogoStyle = {
 
 const webSiteNameStyle = {
   lineHeight: "40px",
+  fontSize: 32,
 };
 
 export default function Header() {
@@ -27,7 +28,7 @@ export default function Header() {
       <div style={headerContentStyle}>
         <div style={websiteLogoStyle}>
           <img src={youtube_icon} alt="youtube_icon" width={40}></img>
-          <h1 style={webSiteNameStyle}>Youtube Popular Video</h1>
+          <h1 style={webSiteNameStyle}>YMPV</h1>
         </div>
       </div>
     </div>

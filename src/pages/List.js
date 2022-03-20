@@ -16,6 +16,7 @@ const listStyle = {
 const listHeaderStyle = {
   display: "flex",
   justifyContent: "space-between",
+  height: 422,
 };
 
 const optionStyle = {
@@ -34,18 +35,17 @@ const unavailableStyle = {
 
 const API = axios.create({
   baseURL:
-    // process.env.NODE_ENV === "development"
-    //   ? "http://localhost:5000"
-    //   :
-    "https://youtube-most-api.herokuapp.com",
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:5000"
+      : "https://youtube-most-api.herokuapp.com",
 });
 
 const List = () => {
-  const [regions, setRegions] = useState([]);
+  const [regions, setRegions] = useState([{ label: "Loading..." }]);
   const [region, setRegion] = useState("United States");
-  const [loadingRegion, setLoadingRegion] = useState(true);
   const [loadingVideos, setLoadingVideos] = useState(true);
   const [videos, setVideos] = useState([]);
+  const [counts, setCounts] = useState("...");
   const [date, setDate] = useState(new Date());
   const [unavailable, setUnavailable] = useState(false);
 
@@ -56,15 +56,14 @@ const List = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        setLoadingRegion(true);
-        const { data } = await API.get("/regions/allRegions");
-
+        const regionRes = await API.get("/regions/allRegions");
+        const countRes = await API.get("/videos/totalVideosCount");
+        setCounts(countRes.data.count);
         setRegions(
-          data.result
+          regionRes.data.result
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((region) => ({ label: region.name, code: region.code }))
         );
-        if (data) setLoadingRegion(false);
       };
       fetchData();
     } catch (error) {
@@ -122,16 +121,25 @@ const List = () => {
                 height: "min-content",
                 position: "absolute",
                 marginLeft: "1rem",
-                transform: "translate(0,0.2rem)",
               }}
             >
               <img src={clockWithWhiteFace} alt="clock" width="48px" />
             </span>
           </h1>
 
-          <h2>
+          <h2 style={{ fontWeight: 500 }}>
             <pre>Began keep track on popular video list on</pre>
-            <pre>March 19 2022 across all 107 regions</pre>
+            <pre>
+              Since <span style={{ fontWeight: 700 }}>March 19 2022</span>
+            </pre>
+            <pre>
+              Records across all <span style={{ fontWeight: 700 }}>107</span>
+              regions
+            </pre>
+            <pre>
+              Currently <span style={{ fontWeight: 700 }}>{counts}</span>{" "}
+              records of videos' id in popular video list
+            </pre>
           </h2>
           <img
             src={splash}
@@ -154,7 +162,9 @@ const List = () => {
             sx={{ minWidth: 300 }}
             onChange={handleOnChange}
             renderInput={(params) => <TextField {...params} label="Region" />}
+            style={{ width: "100%" }}
           />
+
           <div style={datePickerStyle}>
             <DatePicker date={date} setDate={setDate} />
           </div>
