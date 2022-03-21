@@ -5,7 +5,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import DatePicker from "../components/DatePicker";
 import axios from "axios";
 import clockWithWhiteFace from "../assets/images/clock-with-white-face.png";
-import splash from "../assets/images/splash.png";
+import worldImage from "../assets/images/world.png";
 
 const listStyle = {
   paddingTop: "1rem",
@@ -142,13 +142,13 @@ const List = () => {
             </pre>
           </h2>
           <img
-            src={splash}
-            alt="splash"
-            width="100%"
+            src={worldImage}
+            alt="world"
+            width="400"
             style={{
               position: "absolute",
-              width: "800px",
-              transform: "translate(15%,-20%) rotate(-20deg)",
+              width: "400px",
+              transform: "translate(80%,0%)",
               opacity: "10%",
             }}
           />
