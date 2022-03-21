@@ -32,8 +32,16 @@ const VideoContainer = ({ idx, video }) => {
             frameBorder="0"
           />
         </div>
-
-        <h3>{video.title}</h3>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <h3 style={{ fontWeight: 500 }}>{video.title}</h3>
+          <h4 style={{ fontWeight: 500 }}>id: {video.id}</h4>
+        </div>
       </div>
     </div>
   );
