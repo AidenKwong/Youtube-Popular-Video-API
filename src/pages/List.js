@@ -28,7 +28,7 @@ const optionStyle = {
 const datePickerStyle = {};
 
 const unavailableStyle = {
-  margin: "1rem auto",
+  margin: "6rem auto",
   textAlign: "center",
   flex: "1",
 };
@@ -133,7 +133,7 @@ const List = () => {
               Since <span style={{ fontWeight: 700 }}>March 19 2022</span>
             </pre>
             <pre>
-              Records across all <span style={{ fontWeight: 700 }}>107</span>
+              Records across all <span style={{ fontWeight: 700 }}>107</span>{" "}
               regions
             </pre>
             <pre>
@@ -173,7 +173,7 @@ const List = () => {
 
       {unavailable ? (
         <div style={unavailableStyle}>
-          <h3>Sorry, we don't have records on this day.</h3>
+          <h3>Sorry, we don't have records on this day. 😔</h3>
         </div>
       ) : null}
       {loadingVideos && !unavailable && (
