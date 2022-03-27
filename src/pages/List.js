@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import VideoLoadingContainer from "../components/VideoLoadingContainer";
 import { Autocomplete, TextField } from "@mui/material";
 import DatePicker from "../components/DatePicker";
-import axios from "axios";
+import { regionAPI, countAPI, videosAPI } from "../api/youtube-api";
 import clockWithWhiteFace from "../assets/images/clock-with-white-face.png";
 import worldImage from "../assets/images/world.png";
 
@@ -33,13 +33,6 @@ const unavailableStyle = {
   flex: "1",
 };
 
-const API = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:5000"
-      : "https://youtube-most-api.herokuapp.com",
-});
-
 const List = () => {
   const [regions, setRegions] = useState([{ label: "Loading..." }]);
   const [region, setRegion] = useState("United States");
@@ -56,8 +49,8 @@ const List = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const regionRes = await API.get("/regions/allRegions");
-        const countRes = await API.get("/videos/totalVideosCount");
+        const regionRes = await regionAPI();
+        const countRes = await countAPI();
         setCounts(countRes.data.count);
         setRegions(
           regionRes.data.result
@@ -75,12 +68,7 @@ const List = () => {
     const fetchData = async () => {
       setLoadingVideos(true);
       setUnavailable(false);
-      await API.get("/videos/top10Videos", {
-        params: {
-          region: region,
-          date: date,
-        },
-      })
+      await videosAPI(region, date)
         .then((res) => {
           if (res.data) {
             setLoadingVideos(false);
@@ -150,6 +138,7 @@ const List = () => {
               width: "400px",
               transform: "translate(80%,0%)",
               opacity: "10%",
+              pointerEvents: "none",
             }}
           />
         </div>

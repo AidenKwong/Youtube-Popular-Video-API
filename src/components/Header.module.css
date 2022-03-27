@@ -1,0 +1,8 @@
+.tableContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.tableContainer {
+  height: 400;
+  width: 100%;
+}
