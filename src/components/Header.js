@@ -68,7 +68,7 @@ export default function Header() {
               }}
             >
               <h3>Most Frequent Words in Title</h3>
-              <h5>(include titles in all records)</h5>
+              <p>(include titles in all records)</p>
             </Container>
 
             <Table>
@@ -84,7 +84,7 @@ export default function Header() {
               <TableBody>
                 {rows.map((row, i) => (
                   <TableRow
-                    key={row.name}
+                    key={i}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
