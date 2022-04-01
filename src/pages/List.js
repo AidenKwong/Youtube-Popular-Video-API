@@ -144,31 +144,33 @@ const List = () => {
         </div>
 
         <div style={optionStyle}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={regions}
-            sx={{ minWidth: 300 }}
-            onChange={handleOnChange}
-            renderInput={(params) => <TextField {...params} label="Region" />}
-            renderOption={(props, option) => (
-              <Box
-                component="li"
-                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                {...props}
-              >
-                <img
-                  loading="lazy"
-                  width="20"
-                  src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                  srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                  alt=""
-                />
-                {option.label}
-              </Box>
-            )}
-            style={{ width: "100%" }}
-          />
+          {regions && (
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={regions}
+              sx={{ minWidth: 300 }}
+              onChange={handleOnChange}
+              renderInput={(params) => <TextField {...params} label="Region" />}
+              renderOption={(props, option) => (
+                <Box
+                  component="li"
+                  sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                  {...props}
+                >
+                  <img
+                    loading="lazy"
+                    width="20"
+                    src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                    srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                    alt=""
+                  />
+                  {option.label}
+                </Box>
+              )}
+              style={{ width: "100%" }}
+            />
+          )}
 
           <div style={datePickerStyle}>
             <DatePicker date={date} setDate={setDate} />
