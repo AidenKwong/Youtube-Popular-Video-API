@@ -3,9 +3,21 @@ import { useState, useEffect } from "react";
 import VideoLoadingContainer from "../components/VideoLoadingContainer";
 import { Autocomplete, TextField, Box } from "@mui/material";
 import DatePicker from "../components/DatePicker";
-import { regionAPI, countAPI, videosAPI } from "../api/youtube-api";
+import {
+  regionAPI,
+  countAPI,
+  videosAPI,
+  videoCatsAPI,
+} from "../api/youtube-api";
 import clockWithWhiteFace from "../assets/images/clock-with-white-face.png";
 import worldImage from "../assets/images/world.png";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Container from "@mui/material/Container";
 
 const listStyle = {
   paddingTop: "1rem",
@@ -17,6 +29,19 @@ const listHeaderStyle = {
   display: "flex",
   justifyContent: "space-between",
   height: 422,
+};
+
+const videoCatListStyle = {
+  width: "40%",
+  backgroundColor: "#fff",
+  height: "min-content",
+  margin: "1rem 1rem 0 0",
+  borderRadius: "0.5em",
+  boxShadow: `0rem 0.1rem 0.75rem rgb(230, 230, 230)`,
+};
+
+const listContainerStyle = {
+  width: "60%",
 };
 
 const optionStyle = {
@@ -41,6 +66,8 @@ const List = () => {
   const [counts, setCounts] = useState("...");
   const [date, setDate] = useState(new Date());
   const [unavailable, setUnavailable] = useState(false);
+  const [videoCats, setVideoCats] = useState([]);
+  const cols = ["Rank", "Category", "Count"];
 
   const handleOnChange = (e, newVal) => {
     setRegion(newVal.label);
@@ -59,6 +86,10 @@ const List = () => {
         );
       };
       fetchData();
+      (async () => {
+        const { data } = await videoCatsAPI();
+        setVideoCats(data.result.sort((a, b) => b.count - a.count));
+      })();
     } catch (error) {
       console.log(error.code);
     }
@@ -180,28 +211,71 @@ const List = () => {
           </div>
         </div>
       </div>
+      <div style={{ display: "flex" }}>
+        <TableContainer style={videoCatListStyle}>
+          <Container
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              padding: "1rem",
+              gap: "0.5rem",
+              overflow: "hidden",
+            }}
+          >
+            <h3>Most Frequent Video Category in Popular List</h3>
+            <p>(include category in all records)</p>
+          </Container>
 
-      {unavailable ? (
-        <div style={unavailableStyle}>
-          <h3>Sorry, we don't have records on this day. 😔</h3>
-        </div>
-      ) : null}
-      {loadingVideos && !unavailable && (
-        <div>
-          {[...Array(4)].map((x, i) => (
-            <VideoLoadingContainer key={i} />
-          ))}
-        </div>
-      )}
-      {!loadingVideos && !unavailable && (
-        <div>
-          {videos.map((video, idx) => (
-            <div key={video.id}>
-              <VideoContainer idx={idx} video={video} />
+          <Table>
+            <TableHead>
+              <TableRow>
+                {cols.map((col, i) => (
+                  <TableCell align={i === 2 ? "right" : "left"} key={i}>
+                    {col}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {videoCats.map((row, i) => (
+                <TableRow
+                  key={i}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {i + 1}
+                  </TableCell>
+                  <TableCell align="left">{row.videoCat}</TableCell>
+                  <TableCell align="right">{row.count}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <div style={listContainerStyle}>
+          {unavailable ? (
+            <div style={unavailableStyle}>
+              <h3>Sorry, we don't have records on this day. 😔</h3>
             </div>
-          ))}
+          ) : null}
+          {loadingVideos && !unavailable && (
+            <div>
+              {[...Array(4)].map((x, i) => (
+                <VideoLoadingContainer key={i} />
+              ))}
+            </div>
+          )}
+          {!loadingVideos && !unavailable && (
+            <div>
+              {videos.map((video, idx) => (
+                <div key={video.id}>
+                  <VideoContainer idx={idx} video={video} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

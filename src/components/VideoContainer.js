@@ -5,14 +5,8 @@ const containerStyle = {
   boxShadow: `0rem 0.1rem 0.75rem rgb(230, 230, 230)`,
   backgroundColor: "#fff",
   padding: "0.5rem 1rem 1rem 1rem",
-  display: "flex",
   flexDirection: "column",
-  gap: "0.5em",
-};
-
-const container1stPartStyle = {
-  display: "flex",
-  gap: "1rem",
+  gap: "1em",
 };
 
 const VideoContainer = ({ idx, video }) => {
@@ -20,14 +14,14 @@ const VideoContainer = ({ idx, video }) => {
     <div style={containerStyle} key={video.id}>
       <h2> {idx + 1} </h2>
 
-      <div style={container1stPartStyle}>
+      <div>
         <div width="480" height="290">
           <iframe
             title={video.id}
             allowFullScreen="allowfullscreen"
             id="player"
-            width="480"
-            height="290"
+            width="450"
+            height="270"
             src={`https://www.youtube.com/embed/${video.id}`}
             frameBorder="0"
           />
@@ -37,10 +31,19 @@ const VideoContainer = ({ idx, video }) => {
             display: "flex",
             justifyContent: "space-between",
             width: "100%",
+            marginTop: "1rem",
           }}
         >
-          <h3 style={{ fontWeight: 500 }}>{video.title}</h3>
-          <h4 style={{ fontWeight: 500 }}>id: {video.id}</h4>
+          <h3 style={{ fontWeight: 500, maxWidth: "75%" }}>{video.title}</h3>
+          <h4
+            style={{
+              fontWeight: 500,
+              marginLeft: "1rem",
+              width: "max-content",
+            }}
+          >
+            id: {video.id}
+          </h4>
         </div>
       </div>
     </div>
