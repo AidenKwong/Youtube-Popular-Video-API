@@ -215,7 +215,7 @@ const List = () => {
       <div style={{ display: "flex" }}>
         <div style={{ width: 400, height: 300 }}>
           <ins
-            class="adsbygoogle"
+            className="adsbygoogle"
             style={{ display: "block" }}
             data-ad-client="ca-pub-1890424135903675"
             data-ad-slot="7117210525"
