@@ -74,6 +74,7 @@ const List = () => {
   };
 
   useEffect(() => {
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
     try {
       const fetchData = async () => {
         const regionRes = await regionAPI();
@@ -251,6 +252,14 @@ const List = () => {
               ))}
             </TableBody>
           </Table>
+          <ins
+            class="adsbygoogle"
+            style={{ display: "block" }}
+            data-ad-client="ca-pub-1890424135903675"
+            data-ad-slot="7117210525"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          ></ins>
         </TableContainer>
         <div style={listContainerStyle}>
           {unavailable ? (
