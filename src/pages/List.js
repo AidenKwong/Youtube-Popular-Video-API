@@ -213,6 +213,14 @@ const List = () => {
         </div>
       </div>
       <div style={{ display: "flex" }}>
+        <ins
+          class="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-client="ca-pub-1890424135903675"
+          data-ad-slot="7117210525"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
         <TableContainer style={videoCatListStyle}>
           <Container
             style={{
