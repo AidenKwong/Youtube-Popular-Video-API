@@ -18,6 +18,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Container from "@mui/material/Container";
+import AdComponent from "../components/AdComponent";
 
 const listStyle = {
   paddingTop: "1rem",
@@ -213,17 +214,6 @@ const List = () => {
         </div>
       </div>
       <div style={{ display: "flex" }}>
-        <div style={{ width: 400, height: 300 }}>
-          <ins
-            className="adsbygoogle"
-            style={{ display: "block" }}
-            data-ad-client="ca-pub-1890424135903675"
-            data-ad-slot="7117210525"
-            data-ad-format="auto"
-            data-full-width-responsive="true"
-          ></ins>
-        </div>
-
         <TableContainer style={videoCatListStyle}>
           <Container
             style={{
@@ -237,14 +227,7 @@ const List = () => {
             <h3>Most Frequent Video Category in Popular List</h3>
             <p>(include category in all records)</p>
           </Container>
-          <ins
-            class="adsbygoogle"
-            style={{ display: "block" }}
-            data-ad-client="ca-pub-1890424135903675"
-            data-ad-slot="7117210525"
-            data-ad-format="auto"
-            data-full-width-responsive="true"
-          ></ins>
+          <AdComponent />
           <Table>
             <TableHead>
               <TableRow>
