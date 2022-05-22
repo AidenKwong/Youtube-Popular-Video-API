@@ -18,3 +18,4 @@ export const videosAPI = async (region, date) =>
 export const mostFqWordsAPI = async (number) =>
   await API.get("/words/mostFrequentWords", { params: { number: number } });
 export const videoCatsAPI = async () => await API.get("/videoCats");
+export const channelAPI = async () => await API.get("/channel");

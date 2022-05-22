@@ -5,9 +5,9 @@ import { Autocomplete, TextField, Box } from "@mui/material";
 import DatePicker from "../components/DatePicker";
 import {
   regionAPI,
-  countAPI,
   videosAPI,
   videoCatsAPI,
+  channelAPI,
 } from "../api/youtube-api";
 import clockWithWhiteFace from "../assets/images/clock-with-white-face.png";
 import worldImage from "../assets/images/world.png";
@@ -33,7 +33,6 @@ const listHeaderStyle = {
 };
 
 const videoCatListStyle = {
-  width: "40%",
   backgroundColor: "#fff",
   height: "min-content",
   margin: "1rem 1rem 0 0",
@@ -42,7 +41,7 @@ const videoCatListStyle = {
 };
 
 const listContainerStyle = {
-  width: "60%",
+  flex: 1,
 };
 
 const optionStyle = {
@@ -64,34 +63,64 @@ const List = () => {
   const [region, setRegion] = useState("United States");
   const [loadingVideos, setLoadingVideos] = useState(true);
   const [videos, setVideos] = useState([]);
-  const [counts, setCounts] = useState("...");
   const [date, setDate] = useState(new Date());
   const [unavailable, setUnavailable] = useState(false);
   const [videoCats, setVideoCats] = useState([]);
-  const cols = ["Rank", "Category", "Count"];
+  const [channels, setChannels] = useState([]);
+  const cols = ["Rank", "Category", "Percentage"];
+  const cols2 = ["Rank", "Channel", "Percentage"];
 
   const handleOnChange = (e, newVal) => {
     setRegion(newVal.label);
   };
 
   useEffect(() => {
-    (window.adsbygoogle = window.adsbygoogle || []).push({});
     try {
-      const fetchData = async () => {
-        const regionRes = await regionAPI();
-        const countRes = await countAPI();
-        setCounts(countRes.data.count);
+      const fetchRegions = async () => {
+        const { data } = await regionAPI();
         setRegions(
-          regionRes.data.result
+          data.result
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((region) => ({ label: region.name, code: region.code }))
         );
       };
-      fetchData();
-      (async () => {
+
+      const fetchVideoCats = async () => {
         const { data } = await videoCatsAPI();
-        setVideoCats(data.result.sort((a, b) => b.count - a.count));
-      })();
+        const videoCatList = data.result;
+
+        const totalCount = videoCatList.reduce(
+          (acc, curr) => acc + curr.count,
+          0
+        );
+        const videoCatList2 = videoCatList.map((cat) => {
+          return {
+            ...cat,
+            percentage: ((cat.count / totalCount) * 100).toFixed(2) + "%",
+          };
+        });
+        setVideoCats(videoCatList2.sort((a, b) => b.count - a.count));
+      };
+
+      const fetchChannels = async () => {
+        const { data } = await channelAPI();
+        const channelList = data.result;
+        const totalCount = channelList.reduce(
+          (acc, curr) => acc + curr.count,
+          0
+        );
+        const channelList2 = channelList.map((channel) => {
+          return {
+            ...channel,
+            percentage: ((channel.count / totalCount) * 100).toFixed(2) + "%",
+          };
+        });
+        setChannels(channelList2.sort((a, b) => b.count - a.count));
+      };
+
+      fetchRegions();
+      fetchVideoCats();
+      fetchChannels();
     } catch (error) {
       console.log(error.code);
     }
@@ -105,6 +134,7 @@ const List = () => {
         .then((res) => {
           if (res.data) {
             setLoadingVideos(false);
+
             setVideos(res.data.result);
           }
         })
@@ -151,15 +181,11 @@ const List = () => {
           <h2 style={{ fontWeight: 500 }}>
             <pre>Began keep track on popular video list on</pre>
             <pre>
-              Since <span style={{ fontWeight: 700 }}>March 19 2022</span>
+              Since <span style={{ fontWeight: 700 }}>20/3/2022</span>
             </pre>
             <pre>
-              Records across all <span style={{ fontWeight: 700 }}>107</span>{" "}
-              regions
-            </pre>
-            <pre>
-              Currently <span style={{ fontWeight: 700 }}>{counts}</span>{" "}
-              records of videos' id in popular video list
+              Records across all
+              <span style={{ fontWeight: 700 }}> 107 </span>youtube regions
             </pre>
           </h2>
           <img
@@ -213,47 +239,99 @@ const List = () => {
           </div>
         </div>
       </div>
-      <div style={{ display: "flex" }}>
-        <TableContainer style={videoCatListStyle}>
-          <Container
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              padding: "1rem",
-              gap: "0.5rem",
-              overflow: "hidden",
-            }}
-          >
-            <h3>Most Frequent Video Category in Popular List</h3>
-            <p>(include category in all records)</p>
-          </Container>
-          <AdComponent />
-          <Table>
-            <TableHead>
-              <TableRow>
-                {cols.map((col, i) => (
-                  <TableCell align={i === 2 ? "right" : "left"} key={i}>
-                    {col}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {videoCats.map((row, i) => (
-                <TableRow
-                  key={i}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {i + 1}
-                  </TableCell>
-                  <TableCell align="left">{row.videoCat}</TableCell>
-                  <TableCell align="right">{row.count}</TableCell>
+      <div style={{ display: "flex", gap: "1rem" }}>
+        <div>
+          <TableContainer style={videoCatListStyle}>
+            <Container
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "1rem",
+                gap: "0.5rem",
+                overflow: "hidden",
+              }}
+            >
+              <h3>Most Frequent Video Category in Popular List</h3>
+              <p>(include category in all records)</p>
+            </Container>
+            <AdComponent />
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {cols.map((col, i) => (
+                    <TableCell align={i === 2 ? "right" : "left"} key={i}>
+                      {col}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {videoCats.map((row, i) => (
+                  <TableRow
+                    key={i}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {i + 1}
+                    </TableCell>
+                    <TableCell align="left">{row.videoCat}</TableCell>
+                    <TableCell align="right">{row.percentage}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TableContainer style={videoCatListStyle}>
+            <Container
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "1rem",
+                gap: "0.5rem",
+                overflow: "hidden",
+              }}
+            >
+              <h3>Most Frequent Channel in Popular List</h3>
+              <p>(include category in all records)</p>
+            </Container>
+            <AdComponent />
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {cols2.map((col, i) => (
+                    <TableCell align={i === 2 ? "right" : "left"} key={i}>
+                      {col}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {channels.map((row, i) => (
+                  <TableRow
+                    key={i}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {i + 1}
+                    </TableCell>
+                    <TableCell align="left">
+                      <a
+                        href={`https://youtube.com/channel/${row.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ color: "black" }}
+                      >
+                        {row.title}
+                      </a>
+                    </TableCell>
+                    <TableCell align="right">{row.percentage}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+
         <div style={listContainerStyle}>
           {unavailable ? (
             <div style={unavailableStyle}>
