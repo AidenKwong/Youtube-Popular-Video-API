@@ -12,14 +12,12 @@ import Container from "@mui/material/Container";
 import styles from "./Header.module.css";
 
 const headerStyle = {
-  padding: "0.5rem",
+  padding: "0.5rem 1rem",
   borderBottom: `2px solid rgb(240, 240, 240)`,
   backgroundColor: "#fff",
 };
 
 const headerContentStyle = {
-  margin: "0 auto",
-  maxWidth: "1280px",
   display: "flex",
   justifyContent: "space-between",
 };
