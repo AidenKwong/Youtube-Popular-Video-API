@@ -9,7 +9,6 @@ import {
   videoCatsAPI,
   channelAPI,
 } from "../api/youtube-api";
-import { MdArrowBack } from "react-icons/md";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -154,6 +153,89 @@ const List = () => {
           justifyContent: "center",
         }}
       >
+        <div style={listContainerStyle}>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <div style={optionStyle}>
+              {regions && (
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  options={regions}
+                  sx={{ minWidth: 300 }}
+                  onChange={handleOnChange}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Region" />
+                  )}
+                  renderOption={(props, option) => (
+                    <Box
+                      component="li"
+                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                      {...props}
+                    >
+                      {option.code && (
+                        <img
+                          loading="lazy"
+                          width="20"
+                          src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                          srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                          alt=""
+                        />
+                      )}
+
+                      {option.label}
+                    </Box>
+                  )}
+                  style={{ width: "100%" }}
+                />
+              )}
+
+              <div style={datePickerStyle}>
+                <DatePicker date={date} setDate={setDate} style={{ flex: 1 }} />
+              </div>
+            </div>
+            <div
+              style={{
+                backgroundColor: "rgb(255, 255, 255)",
+                padding: "0.5rem 1rem 0.5rem 1rem",
+                flex: 1,
+              }}
+            ></div>
+          </div>
+
+          {unavailable ? (
+            <div style={unavailableStyle}>
+              <h3>Sorry, we don't have records on this day. 😔</h3>
+            </div>
+          ) : null}
+          {loadingVideos && !unavailable && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              {[...Array(4)].map((x, i) => (
+                <VideoLoadingContainer key={i} />
+              ))}
+            </div>
+          )}
+          {!loadingVideos && !unavailable && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              {videos.map((video, idx) => (
+                <div key={video.id}>
+                  <VideoContainer idx={idx} video={video} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <TableContainer style={videoCatListStyle}>
           <Container
             style={{
@@ -243,98 +325,6 @@ const List = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
-        <div style={listContainerStyle}>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <div style={optionStyle}>
-              {regions && (
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  options={regions}
-                  sx={{ minWidth: 300 }}
-                  onChange={handleOnChange}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Region" />
-                  )}
-                  renderOption={(props, option) => (
-                    <Box
-                      component="li"
-                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                      {...props}
-                    >
-                      {option.code && (
-                        <img
-                          loading="lazy"
-                          width="20"
-                          src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                          srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                          alt=""
-                        />
-                      )}
-
-                      {option.label}
-                    </Box>
-                  )}
-                  style={{ width: "100%" }}
-                />
-              )}
-
-              <div style={datePickerStyle}>
-                <DatePicker date={date} setDate={setDate} style={{ flex: 1 }} />
-              </div>
-            </div>
-            <div
-              style={{
-                border: `1px solid rgb(240, 240, 240)`,
-                borderRadius: "0.5em",
-                boxShadow: `0rem 0.1rem 0.75rem rgb(230, 230, 230)`,
-                backgroundColor: "#fff",
-                padding: "0.5rem 1rem 0.5rem 1rem",
-                flex: 1,
-              }}
-            >
-              <div style={{ display: "flex", gap: "1rem" }}>
-                <MdArrowBack size={36} />
-                <h3>{"Select the region you want to check"}</h3>
-              </div>
-            </div>
-          </div>
-
-          {unavailable ? (
-            <div style={unavailableStyle}>
-              <h3>Sorry, we don't have records on this day. 😔</h3>
-            </div>
-          ) : null}
-          {loadingVideos && !unavailable && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
-              {[...Array(4)].map((x, i) => (
-                <VideoLoadingContainer key={i} />
-              ))}
-            </div>
-          )}
-          {!loadingVideos && !unavailable && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
-              {videos.map((video, idx) => (
-                <div key={video.id}>
-                  <VideoContainer idx={idx} video={video} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
