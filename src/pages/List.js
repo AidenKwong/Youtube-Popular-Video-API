@@ -17,6 +17,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Container from "@mui/material/Container";
 import AdComponent from "../components/AdComponent";
+import styles from "./List.module.css";
 
 const listStyle = {
   margin: "0 auto",
@@ -314,7 +315,7 @@ const List = () => {
                       href={`https://youtube.com/channel/${row.id}`}
                       target="_blank"
                       rel="noreferrer"
-                      style={{ color: "black" }}
+                      className={styles.link}
                     >
                       {row.title}
                     </a>
