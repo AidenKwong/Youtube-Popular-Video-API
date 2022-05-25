@@ -42,22 +42,51 @@ const VideoContainer = ({ idx, video }) => {
                 src={`https://www.youtube.com/embed/${video.id}`}
                 frameBorder="0"
               /> */}
+
+            <img
+              width={246}
+              height={138}
+              src={`https://i3.ytimg.com/vi/${video.id}/hqdefault.jpg`}
+              alt={`thumbnail of ${video.id}`}
+              style={{
+                objectFit: "cover",
+              }}
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              <h4>{video.title}</h4>
+              <p
+                style={{
+                  color: "gray",
+                }}
+              >
+                {video.videoCat}
+              </p>
+            </div>
+
             <a
               href={`https://www.youtube.com/watch?v=${video.id}`}
               target="_blank"
               rel="noreferrer"
+              className="link"
+              style={{ fontSize: "14px" }}
             >
-              <img
-                width={246}
-                height={138}
-                src={`https://i3.ytimg.com/vi/${video.id}/hqdefault.jpg`}
-                alt={`thumbnail of ${video.id}`}
-                style={{ objectFit: "cover" }}
-              />
+              {`https://www.youtube.com/watch?v=${video.id}`}
             </a>
           </div>
-
-          <h4>{video.title}</h4>
         </div>
       </div>
     </div>

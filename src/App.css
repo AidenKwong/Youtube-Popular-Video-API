@@ -18,3 +18,21 @@ pre {
   min-height: 110vh;
   background-color: rgb(245, 245, 245);
 }
+
+.link {
+  display: block;
+  color: #0069c0;
+}
+
+.link:link {
+  text-decoration: none;
+}
+.link:visited {
+  text-decoration: none;
+}
+.link:hover {
+  text-decoration: none;
+}
+.link:active {
+  text-decoration: none;
+}

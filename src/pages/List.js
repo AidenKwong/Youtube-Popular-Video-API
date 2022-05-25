@@ -142,6 +142,7 @@ const List = () => {
         });
     };
     fetchData();
+
     document.title = `YMPV - ${region}`;
   }, [region, date]);
 
@@ -209,13 +210,7 @@ const List = () => {
             </div>
           ) : null}
           {loadingVideos && !unavailable && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
+            <div style={{}}>
               {[...Array(4)].map((x, i) => (
                 <VideoLoadingContainer key={i} />
               ))}
