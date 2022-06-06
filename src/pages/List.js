@@ -16,7 +16,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Container from "@mui/material/Container";
-import AdComponent from "../components/AdComponent";
 import styles from "./List.module.css";
 
 const listStyle = {
@@ -245,7 +244,6 @@ const List = () => {
             <h3>Most Frequent Video Categories in Popular List</h3>
             <p>(include category in all records)</p>
           </Container>
-          <AdComponent />
           <Table>
             <TableHead>
               <TableRow>
@@ -285,7 +283,6 @@ const List = () => {
             <h3>Most Frequent Channels in Popular List</h3>
             <p>(include category in all records)</p>
           </Container>
-          <AdComponent />
           <Table>
             <TableHead>
               <TableRow>
