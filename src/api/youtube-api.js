@@ -3,7 +3,7 @@ const API = axios.create({
   baseURL:
     process.env.NODE_ENV === "development"
       ? "http://localhost:5001"
-      : "https://youtube-popular-video-api.herokuapp.com",
+      : "https://ympv.onrender.com",
 });
 
 export const regionAPI = async () => await API.get("/regions/allRegions");
